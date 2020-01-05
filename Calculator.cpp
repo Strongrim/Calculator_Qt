@@ -5,6 +5,7 @@
 #include <QGridLayout>
 #include <QLCDNumber>
 #include <QObject>
+#include <QtMath>
 
 
 Calculator::Calculator(QWidget* pwgt/*= 0*/) : QWidget(pwgt)
@@ -13,17 +14,18 @@ Calculator::Calculator(QWidget* pwgt/*= 0*/) : QWidget(pwgt)
     m_plcd->setSegmentStyle(QLCDNumber::Flat);
     m_plcd->setMinimumSize(150, 50);
 
-    QChar aButtons[4][4] = {{'7', '8', '9', '/'},
-                            {'4', '5', '6', '*'},
-                            {'1', '2', '3', '-'},
-                            {'0', '.', '=', '+'}
+    QString aButtons[5][4] = {{"sin", "cos", "tan", "ln"},
+                            {"7", "8", "9", "/"},
+                            {"4", "5", "6", "*"},
+                            {"1", "2", "3", "-"},
+                            {"0", ".", "=", "+"}
                            };
 
     //Layout setup
     QGridLayout* ptopLayout = new QGridLayout;
     ptopLayout->addWidget(m_plcd, 0, 0, 1, 4);
     ptopLayout->addWidget(createButton("CE"), 1, 3);
-    for (int i = 0; i < 4; ++i) {
+    for (int i = 0; i < 5; ++i) {
         for (int j = 0; j < 4; ++j) {
             ptopLayout->addWidget(createButton(aButtons[i][j]), i + 2, j);
         }
@@ -45,7 +47,7 @@ void Calculator::calculate()
     QString strOperation = m_stk.pop();
     double dOperand1 = m_stk.pop().toDouble();
     double dResult = 0;
-    if (strOperation == '+') {
+    if (strOperation == "+") {
         dResult = dOperand1 + dOperand2;
     }
     if (strOperation == "-") {
@@ -56,6 +58,18 @@ void Calculator::calculate()
     }
     if (strOperation == "*") {
         dResult = dOperand1 * dOperand2;
+    }
+    if (strOperation == "sin") {
+        dResult = sin(dOperand1);
+    }
+    if (strOperation == "cos") {
+        dResult = cos(dOperand1);
+    }
+    if (strOperation == "tan") {
+        dResult = tan(dOperand1);
+    }
+    if (strOperation == "ln") {
+        dResult = log(dOperand1);
     }
     m_plcd->display(dResult);
 }
@@ -89,6 +103,7 @@ void Calculator::slotButtonClicked()
         }
         else {
             m_stk.push(QString().setNum(m_plcd->value()));
+            m_stk.push (str);
             m_strDisplay = "";
             m_plcd->display("0");
         }
